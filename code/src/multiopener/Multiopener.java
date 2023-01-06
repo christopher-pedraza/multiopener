@@ -48,8 +48,12 @@ public class Multiopener {
 		int fileSize = 0;
 
 		try (BufferedReader br = new BufferedReader(new FileReader(CONFIG_FILE_NAME))) {
-			while (br.readLine() != null) {
-				fileSize++;
+			String line = br.readLine();
+			while (line != null) {
+				if (!line.equals("")) {
+					fileSize++;
+				}
+				line = br.readLine();
 			}
 			br.close();
 
@@ -59,6 +63,15 @@ public class Multiopener {
 		} catch (IOException readerException) {
 			try (BufferedWriter bw = new BufferedWriter(new FileWriter(CONFIG_FILE_NAME))) {
 				bw.close();
+				
+				try {
+					File file = new File(CONFIG_FILE_NAME);
+					Desktop.getDesktop().open(file);
+				} catch (IllegalArgumentException | IOException e) {
+					JOptionPane.showMessageDialog(frame, "Couldn't open: '" + CONFIG_FILE_NAME + "'.", ERROR_TITLE,
+							JOptionPane.WARNING_MESSAGE);
+				}
+				
 				JOptionPane.showMessageDialog(frame, ERROR_NEW_FILE);
 			} catch (IOException writerException) {
 				return null;
